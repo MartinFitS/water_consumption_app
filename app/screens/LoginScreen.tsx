@@ -9,6 +9,8 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -22,9 +24,11 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); 
   const { login: loginToContext } = useContext(AuthContext);
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const response = await login(correo_institucional, password);
       setErrorMessage("");
@@ -36,19 +40,21 @@ const LoginScreen = () => {
       console.error("Login error:", error.response?.data || error.message);
       const msg = error.response?.data?.message || "Error al iniciar sesión.";
       setErrorMessage(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : undefined}
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
           <Image
             source={require("../../assets/img/logo_udc.png")}
             style={styles.logo}
@@ -101,18 +107,10 @@ const LoginScreen = () => {
               </Text>
             </View>
           </View>
+
           {errorMessage !== "" && (
-            <View style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              width: "100%",
-              marginTop: 5,
-              paddingLeft: 0,        // eliminar padding izquierdo si hay
-            }}>
-              <Text style={[styles.errorText, { marginLeft: 0, padding: 0 }]}>
-                Usuario y/o contraseña incorrectos.
-              </Text>
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>Error al iniciar sesión porfavor revisa tus credenciales.</Text>
             </View>
           )}
 
@@ -121,6 +119,7 @@ const LoginScreen = () => {
             style={styles.button}
             textColor="white"
             onPress={handleLogin}
+            disabled={loading} 
           >
             Iniciar Sesión
           </Button>
@@ -141,6 +140,19 @@ const LoginScreen = () => {
             <Text style={styles.footerText}>Developed by</Text>
             <Text style={styles.footerText}>@MartinFits & @arielrosasc</Text>
           </View>
+
+          {/* Loader modal */}
+          {loading && (
+            <Modal
+              transparent
+              animationType="fade"
+              visible={loading}
+            >
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#1D61E7" />
+              </View>
+            </Modal>
+          )}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -155,76 +167,27 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
   },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 50,
-  },
-  input: {
-    width: "100%",
-    marginBottom: 15,
-    backgroundColor: "white",
-    borderRadius: 10,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 15,
-  },
-  infoBox: {
-    width: "100%",
-    marginBottom: 12,
-    backgroundColor: "#E8F0FE",
-    padding: 10,
-    borderRadius: 8,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  infoText: {
-    color: "#1D61E7",
-    fontSize: 15,
-    fontWeight: "600",
+  logo: { width: 120, height: 120, marginBottom: 50 },
+  input: { width: "100%", marginBottom: 15, backgroundColor: "white", borderRadius: 10 },
+  passwordContainer: { flexDirection: "row", alignItems: "center", width: "100%" },
+  eyeIcon: { position: "absolute", right: 15 },
+  infoBox: { width: "100%", marginBottom: 12, backgroundColor: "#E8F0FE", padding: 10, borderRadius: 8 },
+  infoRow: { flexDirection: "row", alignItems: "center" },
+  infoText: { color: "#1D61E7", fontSize: 15, fontWeight: "600", flex: 1 },
+  errorContainer: { flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", marginTop: 5 },
+  errorText: { color: "red", fontSize: 14, marginBottom: 10, alignSelf: "flex-start" },
+  button: { width: "100%", paddingVertical: 8, backgroundColor: "#1D61E7", borderRadius: 10, marginTop: 5 },
+  footer: { marginTop: 40, alignItems: "center" },
+  footerText: { color: "#999", fontSize: 13 },
+  registerContainer: { marginTop: 15, alignItems: "center" },
+  registerText: { color: "#555", fontSize: 14 },
+  registerLink: { color: "#1D61E7", fontWeight: "bold" },
+  loaderContainer: {
     flex: 1,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 14,
-    marginBottom: 10,
-    alignSelf: "flex-start",
-  },
-  button: {
-    width: "100%",
-    paddingVertical: 8,
-    backgroundColor: "#1D61E7",
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  footer: {
-    marginTop: 40,
+    backgroundColor: "rgba(0,0,0,0.4)", 
+    justifyContent: "center",
     alignItems: "center",
   },
-  footerText: {
-    color: "#999",
-    fontSize: 13,
-  },
-  registerContainer: {
-    marginTop: 15,
-    alignItems: "center",
-  },
-  registerText: {
-    color: "#555",
-    fontSize: 14,
-  },
-  registerLink: {
-    color: "#1D61E7",
-    fontWeight: "bold",
-  }
 });
 
 export default LoginScreen;

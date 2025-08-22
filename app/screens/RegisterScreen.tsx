@@ -7,6 +7,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { TextInput, Button, Text } from "react-native-paper";
@@ -23,6 +25,7 @@ const RegisterScreen = () => {
   const [secureText, setSecureText] = useState(true);
   const [secureConfirm, setSecureConfirm] = useState(true);
   const [imageBase64, setImageBase64] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -50,9 +53,9 @@ const RegisterScreen = () => {
       return;
     }
 
+    setLoading(true); // activar loader
     try {
       const formData = new FormData();
-
       formData.append("username", username);
       formData.append("correo_institucional", email);
       formData.append("password", password);
@@ -75,8 +78,11 @@ const RegisterScreen = () => {
         error.response?.data?.message ||
         "Ocurrió un error al registrarte. Intenta nuevamente."
       );
+    } finally {
+      setLoading(false); // desactivar loader
     }
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -184,10 +190,18 @@ const RegisterScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        {loading && (
+          <Modal transparent animationType="fade" visible={loading}>
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color="#1D61E7" />
+            </View>
+          </Modal>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
+
 
 const styles = StyleSheet.create({
   scrollContent: {
@@ -197,74 +211,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
   },
-  container: {
-    width: "100%",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 30,
-    color: "#333",
-  },
-  avatarWrapper: {
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: "#ccc",
-  },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 60,
-    backgroundColor: "#E0E0E0",
+  container: { width: "100%", alignItems: "center" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 30, color: "#333" },
+  avatarWrapper: { marginBottom: 10 },
+  avatar: { width: 100, height: 100, borderRadius: 60, borderWidth: 2, borderColor: "#ccc" },
+  avatarPlaceholder: { width: 100, height: 100, borderRadius: 60, backgroundColor: "#E0E0E0", justifyContent: "center", alignItems: "center" },
+  avatarText: { fontSize: 32, color: "#555" },
+  changePhoto: { color: "#555", fontSize: 14, marginBottom: 20 },
+  input: { width: "100%", marginBottom: 16, backgroundColor: "white" },
+  passwordContainer: { flexDirection: "row", alignItems: "center", width: "100%", marginBottom: 5 },
+  eyeIcon: { position: "absolute", right: 15 },
+  button: { width: "100%", marginTop: 10, backgroundColor: "#1D61E7", paddingVertical: 10, borderRadius: 30 },
+  loginLink: { marginTop: 20, fontSize: 14, color: "#333" },
+  loginBold: { color: "#1D61E7", fontWeight: "bold" },
+  loaderContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  avatarText: {
-    fontSize: 32,
-    color: "#555",
-  },
-  changePhoto: {
-    color: "#555",
-    fontSize: 14,
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    marginBottom: 16,
-    backgroundColor: "white",
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 5,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 15,
-  },
-  button: {
-    width: "100%",
-    marginTop: 10,
-    backgroundColor: "#1D61E7",
-    paddingVertical: 10,
-    borderRadius: 30,
-  },
-  loginLink: {
-    marginTop: 20,
-    fontSize: 14,
-    color: "#333",
-  },
-  loginBold: {
-    color: "#1D61E7",
-    fontWeight: "bold",
+    position: "absolute", // que quede sobre todo
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
+
 
 export default RegisterScreen;
