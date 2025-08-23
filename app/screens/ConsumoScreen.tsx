@@ -31,15 +31,16 @@ const ConsumoScreen = () => {
       setLoading(true);
 
       const hoy = new Date();
-      const fechaHoy = hoy.toISOString().slice(0, 10);
+      const fecha_hoy = hoy.toLocaleDateString('sv-SE'); 
       const mes = hoy.getMonth() + 1;
       const anio = hoy.getFullYear();
+
 
       const [resHoy, resMes] = await Promise.all([
         fetch('https://api-tesis-7k22.onrender.com/consumo/hoy', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fecha: fechaHoy }),
+          body: JSON.stringify({ fecha: fecha_hoy }),
         }),
         fetch('https://api-tesis-7k22.onrender.com/consumo/mes', {
           method: 'POST',

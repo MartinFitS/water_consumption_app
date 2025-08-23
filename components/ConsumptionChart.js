@@ -4,7 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import Toast from 'react-native-toast-message';
 
 const screenWidth = Dimensions.get('window').width;
-
+ 
 const horasLabels = ['01:00', '07:00', '13:00', '19:00', '00:00'];
 
 const formatHour12h = (hourString) => {
@@ -16,6 +16,8 @@ const formatHour12h = (hourString) => {
 
 const ConsumptionChart = ({ selectedPeriod, data }) => {
   if (!data || !data.datos) return null;
+
+  console.log("data", data);
 
   let chartData = {
     labels: [],
