@@ -29,12 +29,17 @@
   "submit": {
     "production": {}
   },
-  "extra": {
-    "eas": {
-      "projectId": "7b49b8c6-0bfa-492e-8178-bc06e2ea7801"
-    }
-  },
   "expo": {
+    "name": "WaterFie",                        
+    "slug": "appagua",                         
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logoUdc.png",               
+    "splash": {
+      "image": "./assets/logoUdc.png",          
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "android": {
       "package": "com.mserna.appagua"
     },
@@ -42,6 +47,11 @@
       "eas": {
         "projectId": "7b49b8c6-0bfa-492e-8178-bc06e2ea7801"
       }
+    }
+  },
+  "extra": {
+    "eas": {
+      "projectId": "7b49b8c6-0bfa-492e-8178-bc06e2ea7801"
     }
   }
 }

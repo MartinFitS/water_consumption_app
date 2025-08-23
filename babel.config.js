@@ -14,7 +14,7 @@ module.exports = function (api) {
             },
           },
         ],
-        "react-native-reanimated/plugin", // Necesario si usas reanimated
+        "react-native-reanimated/plugin", 
       ],
     };
   };
